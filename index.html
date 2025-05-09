@@ -52,14 +52,14 @@
     const statusDiv = document.getElementById('status');
 
     // GitHub RAW URL (command.txt)
-    const commandUrl = 'https://raw.githubusercontent.com/yourusername/esp8266-web-control/main/command.txt';
+    const commandUrl = 'https://raw.githubusercontent.com/sunnydrk/esp8266-web-control/main/command.txt';
     const updateUrl = 'https://api.github.com/repos/sunnydrk/esp8266-web-control/contents/command.txt';
 
     // Function to update command.txt
     async function updateCommand(command) {
       try {
         // Fetch current file SHA (required by GitHub API)
-        const response = await fetch(`https://api.github.com/repos/yourusername/esp8266-web-control/contents/command.txt`);
+        const response = await fetch(`https://api.github.com/repos/sunnydrk/esp8266-web-control/contents/command.txt`);
         const data = await response.json();
         const sha = data.sha;
 
@@ -67,7 +67,7 @@
         const updateResponse = await fetch(updateUrl, {
           method: 'PUT',
           headers: {
-            'Authorization': 'token YOUR_GITHUB_TOKEN', // GitHub Personal Access Token
+            'Authorization': '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', // GitHub Personal Access Token
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
