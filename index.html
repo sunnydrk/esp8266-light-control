@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP8266 Light Control</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    #onBtn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    #offBtn {
+      background-color: #f44336;
+      color: white;
+    }
+    .btn:hover {
+      opacity: 0.8;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Light Control</h1>
+  <button id="onBtn" class="btn">ON</button>
+  <button id="offBtn" class="btn">OFF</button>
+  <div id="status">Status: Waiting...</div>
+
+  <script>
+    const onBtn = document.getElementById('onBtn');
+    const offBtn = document.getElementById('offBtn');
+    const statusDiv = document.getElementById('status');
+
+    // GitHub RAW URL (command.txt)
+    const commandUrl = 'https://raw.githubusercontent.com/yourusername/esp8266-web-control/main/command.txt';
+    const updateUrl = 'https://api.github.com/repos/sunnydrk/esp8266-web-control/contents/command.txt';
+
+    // Function to update command.txt
+    async function updateCommand(command) {
+      try {
+        // Fetch current file SHA (required by GitHub API)
+        const response = await fetch(`https://api.github.com/repos/yourusername/esp8266-web-control/contents/command.txt`);
+        const data = await response.json();
+        const sha = data.sha;
+
+        // Update file
+        const updateResponse = await fetch(updateUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token YOUR_GITHUB_TOKEN', // GitHub Personal Access Token
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Update command to ${command}`,
+            content: btoa(command), // Base64 encode
+            sha: sha
+          }),
+        });
+
+        if (updateResponse.ok) {
+          statusDiv.textContent = `Status: Light turned ${command}`;
+          statusDiv.style.color = command === 'ON' ? 'green' : 'red';
+        } else {
+          statusDiv.textContent = 'Error: Failed to update';
+          statusDiv.style.color = 'black';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        statusDiv.textContent = 'Error: Check console';
+      }
+    }
+
+    // Button event listeners
+    onBtn.addEventListener('click', () => updateCommand('ON'));
+    offBtn.addEventListener('click', () => updateCommand('OFF'));
+  </script>
+</body>
+</html>
